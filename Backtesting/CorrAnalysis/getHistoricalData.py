@@ -1,6 +1,7 @@
 from binance.client import Client
 import pandas as pd
 
+
 def getHistoricalData(ticker_symbol: str, interval:str, start_date:str) -> pd.DataFrame:
     
     client = Client()
@@ -8,7 +9,6 @@ def getHistoricalData(ticker_symbol: str, interval:str, start_date:str) -> pd.Da
     historical_df = formatHistData(historical)
 
     return historical_df
-
 
 def formatHistData(historical):
 
@@ -52,3 +52,30 @@ def formatHistData(historical):
     hist_df[numerics] = hist_df[numerics].apply(pd.to_numeric)
 
     return hist_df
+
+def get_all_tickers():
+
+    client = Client()
+    all_data = client.get_all_tickers()
+    ticker_list = []
+
+    for coin in all_data:
+        ticker_list.append(coin["symbol"])
+
+    ticker_df = pd.DataFrame(ticker_list, columns=["Ticker"])
+    ticker_df["Ticker"] = ticker_df["Ticker"].astype('|S80')
+    
+    return ticker_df
+
+def convert_hist_to_percentagechange(historical):
+    
+    close_values = ['Open Time','Close']
+    close_df = historical[close_values]
+
+    #Add Percentage Change Column
+    close_df['Percentage Change'] = close_df['Close'].pct_change()*100
+    close_df = close_df.dropna()
+    close_df = close_df.reset_index(drop=True)
+    close_df = close_df[['Open Time', 'Percentage Change']]
+    
+    return close_df
