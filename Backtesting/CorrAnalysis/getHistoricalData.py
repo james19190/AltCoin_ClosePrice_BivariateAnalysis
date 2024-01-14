@@ -79,3 +79,10 @@ def convert_hist_to_percentagechange(historical):
     close_df = close_df[['Open Time', 'Percentage Change']]
     
     return close_df
+
+def Visualization(historical):
+    for coin in historical:
+        pd.DataFrame
+
+
+2048
